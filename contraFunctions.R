@@ -13,7 +13,7 @@ library(lmerTest)
 `%notin%` <- Negate(`%in%`)
 
 ##---- Data Load ----
-setwd("/Users/gracehart/ccsLab/contrahedonic")
+setwd("/Users/gracehart/ccsLab/contrahedonicProject/workingContrahedonic/")
 t1dat <- read.csv("t1_cleaned_070722_anon.csv")
 t2dat <- read.csv("t2_cleaned_010722_anon.csv")
 t3dat <- read.csv("t3_cleaned_011622_anon.csv")
@@ -239,8 +239,8 @@ gender_demogs %>%
 #BMI
 contra_demogs <- contra_demogs %>%
   mutate(
-    weight_measured = as.numeric(weight_measured),
-    height_measured = as.numeric(height_measured)
+    weight_measured = as.numeric(weight_measured_recoded),
+    height_measured = as.numeric(height_measured_recoded)
   )
 
 calculate_bmi <- function(weight_pounds, height_inches) {
@@ -493,8 +493,8 @@ describe(contra)
 tres <- contra %>% # create a new dataframe called "tres" by pulling from the existing dataframe "contra"...
   select(-c(ID, time)) %>% # ...every column except ID and time.
   map_df(~ broom::tidy(t.test(., mu = 0, alternative = "two.sided")), .id = 'var') #map_daf applies a function (in this case, broom::tidy(t.test...), which applies a t test
-                                                                                   #stores the result in a tidy dataframe) to each column. mu = 0 sets the null hypothesis
-                                                                                   #(i.e., that the true mean of the sample = 0)
+#stores the result in a tidy dataframe) to each column. mu = 0 sets the null hypothesis
+#(i.e., that the true mean of the sample = 0)
 print(tres, n = 32) # result: all significantly different than zero 
 # var = the variable (item/behavior pair) under examination
 # estimate = sample mean of the variable; that is, the mean of all responses to the variable in the current sample
@@ -578,8 +578,8 @@ ggplot(stacked_toplot, aes(x = behavior, y = perc, fill = value)) +
     plot.margin = margin(5, 5, 5, 5)  # Add margin around the entire plot
   )
 
-ggsave("/Users/gracehart/ccsLab/contrahedonic/figures/2025.7.15_stackedBar.pdf",
-       width = 14, height = 8)
+#ggsave("/Users/gracehart/ccsLab/contrahedonic/figures/2025.7.15_stackedBar.pdf",
+#       width = 14, height = 8)
 
 # stacked bar chart - rotated
 ggplot(stacked_toplot, aes(x = behavior, y = perc, fill = value)) + 
@@ -708,7 +708,7 @@ lsmeans::lsmeans(keep_feel_angry_lmer, pairwise ~ variable, adjust = "tukey")
 sum(is.na(melted_contra$value))
 
 ##---- Visualize distributions ----
-setwd("/Users/gracehart/ccsLab/contrahedonic/")
+setwd("/Users/gracehart/ccsLab/contrahedonicProject/workingContrahedonic/")
 ggplot(melted_contra, aes(x = value)) + 
   geom_bar() + 
   facet_wrap(~ variable) + 
@@ -783,12 +783,12 @@ restrict_pvals_vec <- as.vector(restrict_pvals$p) # flatten original p-value mat
 restrict_pvals_adj_vec <- p.adjust(restrict_pvals_vec, method = "fdr") # adjust for multiple comparisons using Benjamini-Hochberg (i.e. fdr)
 
 restrict_pvals_adj_mat <- matrix(restrict_pvals_adj_vec, # reshape back into matrix
-                        nrow = nrow(restrict_pvals$p),
-                        ncol = ncol(restrict_pvals$p),
-                        dimnames = dimnames(restrict_pvals$p))  # preserves row/col names
+                                 nrow = nrow(restrict_pvals$p),
+                                 ncol = ncol(restrict_pvals$p),
+                                 dimnames = dimnames(restrict_pvals$p))  # preserves row/col names
 
 # Plot
-#pdf("/Users/gracehart/ccsLab/contrahedonic/2025.7.2_restrict_cor.pdf", width = 10, height = 10)
+#pdf("/Users/gracehart/ccsLab/contrahedonicProject/finalContrahedonic/contra_ijedSubmission/contra_ijed_revision1/contra_ijed_revision1/2026.03.11_restrict_corr.pdf", width = 10, height = 10)
 corrplot(restrict_cor, method = "color", 
          addCoef.col = "gray30", 
          insig = "blank", 
@@ -857,9 +857,9 @@ rownames(restrict_pvals_adj_mat) <- new_order
 colnames(restrict_pvals_adj_mat) <- new_order
 
 # Plot
-#pdf("/Users/gracehart/ccsLab/contrahedonic/2025.7.2_restrict_cor.pdf", width = 10, height = 10)
+#pdf("/Users/gracehart/ccsLab/contrahedonicProject/finalContrahedonic/contra_ijedSubmission/contra_ijed_revision1/contra_ijed_revision1/2026.03.11_restrict_corr.pdf", width = 10, height = 10)
 corrplot(restrict_cor, method = "color", 
-         addCoef.col = "gray30", 
+         addCoef.col = "gray20", 
          insig = "blank", 
          tl.col = "black",
          tl.cex = 1.5,
@@ -868,7 +868,8 @@ corrplot(restrict_cor, method = "color",
          bg = "lightgrey",
          tl.srt = 75,
          pch.cex = 1.2, 
-         cl.pos = "b")
+         cl.pos = "b",
+         col = colorRampPalette(c("red", "gray80", "#2166AC"))(200))
 dev.off()
 
 # binge
@@ -906,9 +907,9 @@ rownames(binge_pvals_adj_mat) <- new_order
 colnames(binge_pvals_adj_mat) <- new_order
 
 # Plot
-#pdf("/Users/gracehart/ccsLab/contrahedonic/2025.7.2_binge_cor.pdf", width = 10, height = 10)
+#pdf("/Users/gracehart/ccsLab/contrahedonicProject/finalContrahedonic/contra_ijedSubmission/contra_ijed_revision1/contra_ijed_revision1/2026.03.11_binge_corr.pdf", width = 10, height = 10)
 corrplot(binge_cor, method = "color", 
-         addCoef.col = "gray30", 
+         addCoef.col = "gray20", 
          insig = "blank", 
          tl.col = "black",
          tl.cex = 1.5,
@@ -917,7 +918,8 @@ corrplot(binge_cor, method = "color",
          bg = "lightgrey",
          tl.srt = 75,
          pch.cex = 1.2, 
-         cl.pos = "b")
+         cl.pos = "b",
+         col = colorRampPalette(c("red", "gray80", "#2166AC"))(200))
 dev.off()
 
 # purge
@@ -955,9 +957,9 @@ rownames(purge_pvals_adj_mat) <- new_order
 colnames(purge_pvals_adj_mat) <- new_order
 
 # Plot
-#pdf("/Users/gracehart/ccsLab/contrahedonic/2025.7.2_purge_cor.pdf", width = 10, height = 10)
+#pdf("/Users/gracehart/ccsLab/contrahedonicProject/finalContrahedonic/contra_ijedSubmission/contra_ijed_revision1/contra_ijed_revision1/2026.03.11_purge_corr.pdf", width = 10, height = 10)
 corrplot(purge_cor, method = "color", 
-         addCoef.col = "gray30", 
+         addCoef.col = "gray20", 
          insig = "blank", 
          tl.col = "black",
          tl.cex = 1.5,
@@ -966,7 +968,8 @@ corrplot(purge_cor, method = "color",
          bg = "lightgrey",
          tl.srt = 75,
          pch.cex = 1.2, 
-         cl.pos = "b")
+         cl.pos = "b",
+         col = colorRampPalette(c("red", "gray80", "#2166AC"))(200))
 dev.off()
 
 # nssi
@@ -1004,9 +1007,9 @@ rownames(nssi_pvals_adj_mat) <- new_order
 colnames(nssi_pvals_adj_mat) <- new_order
 
 # Plot
-#pdf("/Users/gracehart/ccsLab/contrahedonic/2025.7.2_nssi_cor.pdf", width = 10, height = 10)
+#pdf("/Users/gracehart/ccsLab/contrahedonicProject/finalContrahedonic/contra_ijedSubmission/contra_ijed_revision1/contra_ijed_revision1/2026.03.11_nssi_corr.pdf", width = 10, height = 10)
 corrplot(nssi_cor, method = "color", 
-         addCoef.col = "gray30", 
+         addCoef.col = "gray20", 
          insig = "blank", 
          tl.col = "black",
          tl.cex = 1.5,
@@ -1015,7 +1018,8 @@ corrplot(nssi_cor, method = "color",
          bg = "lightgrey",
          tl.srt = 75,
          pch.cex = 1.2, 
-         cl.pos = "b")
+         cl.pos = "b",
+         col = colorRampPalette(c("red", "gray80", "#2166AC"))(200))
 dev.off()
 
 ## Psychometric properties
@@ -1091,3 +1095,386 @@ print(fambNSSIAlpha)
 
 #sapply(fambNSSI, function(x) length(unique(x))) # to check warning message; there are at least 4 unique values in each item, so it is fine to proceed
 
+## Missingness Check
+missingCheck <- fulldf
+
+# Restrict
+# First, check how many NAs to start
+missingCheck %>% 
+  select(matches("^restrict|restrict$|^fambrestrict")) %>% 
+  is.na() %>% 
+  sum()
+
+# Assign 999
+missingCheck <- missingCheck %>% 
+  mutate(across(matches("^restrict|restrict$|^fambrestrict"), 
+                ~ifelse(restrict_3months == 1 & is.na(.), 999, .)))
+
+# Remaining NAs?
+missingCheck %>% 
+  select(matches("^restrict|restrict$|^fambrestrict")) %>% 
+  is.na() %>% 
+  sum()
+
+# Binge
+# First, check how many NAs to start
+missingCheck %>% 
+  select(matches("^binge|binge$|^fambbinge")) %>% 
+  is.na() %>% 
+  sum()
+
+# Assign 999
+missingCheck <- missingCheck %>% 
+  mutate(across(matches("^binge|binge$|^fambbinge"), 
+                ~ifelse(binge_3months == 1 & is.na(.), 999, .)))
+
+# Remaining NAs?
+missingCheck %>% 
+  select(matches("^binge|binge$|^fambbinge")) %>% 
+  is.na() %>% 
+  sum()
+
+# Purge
+# First, check how many NAs to start
+missingCheck %>% 
+  select(matches("^purge|purge$|^fambpurge")) %>% 
+  is.na() %>% 
+  sum()
+
+# Assign 999
+missingCheck <- missingCheck %>% 
+  mutate(across(matches("^purge|purge$|^fambpurge"), 
+                ~ifelse(purge_3months == 1 & is.na(.), 999, .)))
+
+# Remaining NAs?
+missingCheck %>% 
+  select(matches("^purge|purge$|^fambpurge")) %>% 
+  is.na() %>% 
+  sum()
+
+# NSSI
+# First, check how many NAs to start
+missingCheck %>% 
+  select(matches("^NSSI|NSSI$|^nssi|nssi$|fambnssi")) %>% 
+  is.na() %>% 
+  sum()
+
+# Assign 999
+missingCheck <- missingCheck %>% 
+  mutate(across(matches("^NSSI|NSSI$|^nssi|nssi$|fambnssi"), 
+                ~ifelse(NSSI_3months == 1 & is.na(.), 999, .)))
+
+# Remaining NAs?
+missingCheck %>% 
+  select(matches("^NSSI|NSSI$|^nssi|nssi$|fambnssi")) %>% 
+  is.na() %>% 
+  sum()
+
+sum(is.na(missingCheck))
+
+# Remove irrelevant columns
+missingCheck <- (select(missingCheck, 
+                        -ExternalReference))
+
+sum(is.na(missingCheck))
+
+# Create focused dataframe with only analyzed variables
+analysesFull <- missingCheck %>%
+  select(
+    # ID variable
+    ID,
+    
+    # CONTRAHEDONIC VARIABLES
+    feel_bad_restrict, feel_bad_binge, feel_bad_purge, feel_bad_nssi,
+    keep_feel_bad_restrict, keep_feel_bad_binge, keep_feel_bad_purge, keep_feel_bad_nssi,
+    feel_neg_gen_restrict, feel_neg_gen_binge, feel_neg_gen_purge, feel_neg_gen_nssi,
+    keep_feel_neg_gen_restrict, keep_feel_neg_gen_binge, keep_feel_neg_gen_purge, keep_feel_neg_gen_nssi,
+    inc_bad_feelings_restrict, inc_bad_feelings_binge, inc_bad_feelings_purge, inc_bad_feelings_nssi,
+    inc_neg_gen_restrict, inc_neg_gen_binge, inc_neg_gen_purge, inc_neg_gen_nssi,
+    stop_feel_good_restrict, stop_feel_good_binge, stop_feel_good_purge, stop_feel_good_nssi,
+    reduc_good_gen_restrict, reduc_good_gen_binge, reduc_good_gen_purge, reduc_good_gen_nssi,
+    
+    # PRO-HEDONIC VARIABLES
+    all_of(pro_items),
+    
+    # BEHAVIOR FREQUENCY - 3 MONTHS (yes/no)
+    restrict_3months, binge_3months, purge_3months, NSSI_3months,
+    
+    # BEHAVIOR FREQUENCY - PAST MONTH (times/count)
+    restrict_month, binge_month, purge_month_times,
+    
+    # BEHAVIOR FREQUENCY - 3 MONTHS (times/count)
+    restrict_3months_tim, binge_3months_times, purge_3months_times, NSSI_3months_times,
+    
+    # FOUR FUNCTIONS
+    contains("_ANR"), contains("_APR"), contains("_SNR"), contains("_SPR"),
+    
+    # SELF-PUNISHMENT 
+    contains("punish_"),
+    
+    # SELF-CRITICISM (SRS)
+    SRS_1, SRS_2, SRS_3, SRS_4, SRS_5, SRS_6, SRS_7, SRS_8,
+    
+    # EATING DISORDER SYMPTOMS (EDEQ)
+    matches("^EDEQ([1-9]|1[0-6]|3[0-9])$"), -matches("EDEQ34"),
+    
+    # DEMOGRAPHICS
+    age_calculated,        
+    sex_birth,           
+    gender,               
+    trans,                
+    sexual_orientation,
+    height_measured_recoded,
+    weight_measured_recoded
+  )
+
+# Add race from contra_demogs
+analysesFull <- analysesFull %>%
+  left_join(contra_demogs %>% select(ID, race), by = "ID")
+
+# Check missingness
+total_cells <- nrow(analysesFull) * ncol(analysesFull)
+total_missing <- sum(is.na(analysesFull))
+percent_missing <- (total_missing / total_cells) * 100
+
+cat("Total cells:", total_cells, "\n")
+cat("Missing cells:", total_missing, "\n")
+cat("Percent missing:", round(percent_missing, 2), "%\n")
+
+# Breakdown by variable type
+cat("\nMissingness by variable type:\n")
+
+cat("Contrahedonic vars:", sum(is.na(analysesFull %>% select(contains(c("feel_bad", "feel_neg", "inc_bad", "inc_neg", "stop_feel", "reduc_good"))))), "\n")
+contra_df <- analysesFull %>% select(contains(c("feel_bad", "feel_neg", "inc_bad", "inc_neg", "stop_feel", "reduc_good")))
+total_contra_cells <- nrow(contra_df) * ncol(contra_df)
+total_contra_missing <- sum(is.na(contra_df))
+percent_contra_missing <- (total_contra_missing / total_contra_cells) * 100
+cat("Contrahedonic vars - Missing cells:", total_contra_missing, "\n")
+cat("Contrahedonic vars - Total cells:", total_contra_cells, "\n")
+cat("Contrahedonic vars - Percent missing:", round(percent_contra_missing, 2), "%\n")
+
+cat("Pro-hedonic vars:", sum(is.na(analysesFull %>% select(all_of(pro_items)))), "\n")
+cat("SRS vars:", sum(is.na(analysesFull %>% select(SRS_1:SRS_8))), "\n")
+cat("EDEQ vars:", sum(is.na(analysesFull %>% select(matches("^EDEQ([1-9]|1[0-6]|3[0-9])$")))), "\n")
+cat("Demographics:", sum(is.na(analysesFull %>% select(age_calculated, sex_birth, gender, trans, sexual_orientation, race, height_measured_recoded, weight_measured_recoded))), "\n")
+
+# Calculate percent missing for each variable
+missing_by_var <- analysesFull %>%
+  summarise(across(everything(), ~sum(is.na(.)))) %>%
+  pivot_longer(everything(), names_to = "variable", values_to = "n_missing") %>%
+  mutate(
+    n_total = nrow(analysesFull),
+    percent_missing = round((n_missing / n_total) * 100, 2)
+  ) %>%
+  arrange(desc(percent_missing))
+
+# Display the results
+print(missing_by_var, n = Inf)
+
+## MCAR Test
+# Fixes
+non_numeric <- names(analysesFull)[!sapply(analysesFull, is.numeric)]
+non_numeric
+
+analysesFull <- analysesFull %>%
+  mutate(
+    
+    # -------------------------
+    # Sex at birth
+    # -------------------------
+    sex_birth = case_when(
+      sex_birth == "Female"        ~ 1,
+      sex_birth == "Male"          ~ 2,
+      sex_birth == "PreferNotSay"  ~ 3,
+      TRUE ~ NA_real_
+    ),
+    
+    # -------------------------
+    # Trans identity
+    # -------------------------
+    trans = case_when(
+      trans == "Yes" ~ 1,
+      trans == "No"  ~ 2,
+      TRUE ~ NA_real_
+    ),
+    
+    # -------------------------
+    # Gender
+    # -------------------------
+    gender = case_when(
+      gender == "Female"        ~ 1,
+      gender == "Male"          ~ 2,
+      gender == "PreferNotSay"  ~ 3,
+      gender == "NotListed"     ~ 4,
+      TRUE ~ NA_real_
+    ),
+    
+    # -------------------------
+    # Sexual orientation
+    # -------------------------
+    sexual_orientation = case_when(
+      sexual_orientation == "Bisexual"     ~ 1,
+      sexual_orientation == "Gay/Lesbian"  ~ 2,
+      sexual_orientation %in% c("NotListed","NotSure") ~ 3,
+      sexual_orientation == "Straight"     ~ 4,
+      TRUE ~ NA_real_
+    )
+  )
+
+# Race
+analysesFull <- analysesFull %>%
+  mutate(
+    race = if_else(
+      !is.na(race) & str_trim(race) != "",
+      1,
+      NA_real_
+    )
+  )
+
+# MCAR Test
+
+# FAMB only
+analysesFull_famb <- analysesFull %>%
+  select(
+    contains(c(contra_vars, pro_items)
+  ))
+
+sum(is.na(analysesFull_famb))
+# Total NAs = 358
+
+# SRS only
+analysesFull_srs <- analysesFull %>%
+  select(
+    ID,
+    contains("SRS_")
+  )
+
+sum(is.na(analysesFull_srs))
+# Total NAs = 176
+137*8
+# = 1096
+176/1096
+# = 16.1%
+
+analysesFull_srs %>%
+  filter(if_all(-ID, is.na)) %>%
+  nrow()
+# 22
+
+# EDEQ only
+analysesFull_edeq <- analysesFull %>%
+  select(
+    ID,
+    contains("EDEQ")
+  )
+
+sum(is.na(analysesFull_edeq))
+# Total = 498
+# 19 people just didn't respond to EDEQ at all
+137*25
+# = 3425
+498/3425
+# = 14.5%
+
+analysesFull_edeq %>%
+  filter(if_all(-ID, is.na)) %>%
+  nrow()
+# 19
+
+# check overlapping total missing rows
+# IDs with completely-missing SRS (excluding ID column)
+srs_missing_ids <- analysesFull_srs %>%
+  filter(if_all(-ID, is.na)) %>%
+  pull(ID) %>%
+  unique()
+
+# IDs with completely-missing EDEQ (excluding ID column)
+edeq_missing_ids <- analysesFull_edeq %>%
+  filter(if_all(-ID, is.na)) %>%
+  pull(ID) %>%
+  unique()
+
+# How many are the same participants?
+n_overlap <- length(intersect(srs_missing_ids, edeq_missing_ids))
+n_overlap
+
+# People who skipped ALL SRS items
+srs_skippers <- analysesFull_srs %>%
+  filter(if_all(-ID, is.na)) %>%
+  pull(ID) %>%
+  unique()
+
+# People who skipped ALL EDEQ items
+edeq_skippers <- analysesFull_edeq %>%
+  filter(if_all(-ID, is.na)) %>%
+  pull(ID) %>%
+  unique()
+
+all(edeq_skippers %in% srs_skippers)
+intersect(edeq_skippers, srs_skippers)
+
+# how many people endorsed each behavior at ALL (not just for contra?)
+# 1 = no
+# 2 = yes
+
+# restrict = 115
+fulldf %>%
+  filter(restrict_3months == 2) %>%
+  nrow()
+
+# binge = 78
+fulldf %>%
+  filter(binge_3months == 2) %>%
+  nrow()
+
+# purge = 37
+fulldf %>%
+  filter(purge_3months == 2) %>%
+  nrow()
+
+# nssi = 70
+fulldf %>%
+  filter(NSSI_3months == 2) %>%
+  nrow()
+
+# average frequencies of behaviors
+# restrict
+mean(fulldf$restrict_3months_tim)
+sd(fulldf$restrict_3months_tim)
+
+# binge
+mean(fulldf$binge_3months_times)
+sd(fulldf$binge_3months_times)
+
+# purge
+mean(fulldf$purge_3months_times)
+sd(fulldf$purge_3months_times)
+
+# nssi
+mean(fulldf$NSSI_3months_times)
+sd(fulldf$NSSI_3months_times)
+
+# How many participants completed each kind of FAMB?
+famb <- cbind(pro, contra)
+
+names(famb) <- make.unique(names(famb))
+
+# restrict - 114
+famb %>%
+  filter(if_any(contains("restrict"), ~ !is.na(.))) %>%
+  summarise(n_participants = n_distinct(ID))
+
+# binge - 77
+famb %>%
+  filter(if_any(contains("binge"), ~ !is.na(.))) %>%
+  summarise(n_participants = n_distinct(ID))
+
+# purge - 36
+famb %>%
+  filter(if_any(contains("purge"), ~ !is.na(.))) %>%
+  summarise(n_participants = n_distinct(ID))
+
+# nssi - 67
+famb %>%
+  filter(if_any(contains("NSSI"), ~ !is.na(.))) %>%
+  summarise(n_participants = n_distinct(ID))
